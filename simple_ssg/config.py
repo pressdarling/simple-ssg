@@ -13,28 +13,32 @@ class SiteConfig:
     Handles loading from file or dictionary and setting defaults.
     """
     
-    def __init__(self, config_file=None, config_dict=None):
+    def __init__(self, config_file=None, config_dict=None, test_mode=False):
         """
         Initialize configuration from file or dictionary.
-        
+
         Parameters:
         - config_file: Path to a YAML/JSON configuration file
         - config_dict: Dictionary containing configuration values
+        - test_mode: Skip validation of directories for testing
         """
+        # Store test mode flag
+        self.test_mode = test_mode
+        
         # Set default values
         self.set_defaults()
-        
+
         # Load from file if provided
         if config_file:
             self.load_from_file(config_file)
-        
+
         # Override with dictionary if provided
         if config_dict:
             self.update_from_dict(config_dict)
-        
+
         # Validate configuration
         self.validate()
-    
+
     def set_defaults(self):
         """Set default configuration values."""
         # Basic paths
@@ -104,21 +108,27 @@ class SiteConfig:
     
     def validate(self):
         """Validate the configuration."""
+        # Skip validation in test mode
+        if self.test_mode:
+            return True
+            
         # Check required directories
         if not os.path.exists(self.content_dir):
             print(f"Error: Content directory {self.content_dir} not found.")
             sys.exit(1)
-        
+
         if not os.path.exists(self.template_path):
             print(f"Error: Template file {self.template_path} not found.")
             sys.exit(1)
-        
+
         # Check static directories
         for static_dir in self.static_dirs:
             if not os.path.exists(static_dir):
                 print(f"Warning: Static directory {static_dir} does not exist. It will be skipped.")
-        
+
         # Validate base URL for SEO features
         if self.generate_sitemap or self.generate_robots:
             if not self.base_url or self.base_url == 'https://example.com':
                 print("Warning: Using default base URL (https://example.com) for sitemap and robots.txt.")
+        
+        return True

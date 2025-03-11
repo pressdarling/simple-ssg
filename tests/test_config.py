@@ -18,13 +18,13 @@ class TestSiteConfig(unittest.TestCase):
     
     def test_default_config(self):
         """Test default configuration values."""
-        config = SiteConfig()
+        config = SiteConfig(test_mode=True)
         
         # Check some default values
         self.assertEqual(config.content_dir, 'content')
         self.assertEqual(config.output_dir, 'build')
         self.assertTrue(config.minify)
-    
+
     def test_config_from_dict(self):
         """Test configuration from dictionary."""
         config_dict = {
@@ -34,17 +34,17 @@ class TestSiteConfig(unittest.TestCase):
             'base_url': 'https://test.com'
         }
         
-        config = SiteConfig(config_dict=config_dict)
+        config = SiteConfig(config_dict=config_dict, test_mode=True)
         
         # Check values from dictionary
         self.assertEqual(config.content_dir, 'pages')
         self.assertEqual(config.output_dir, 'public')
         self.assertFalse(config.minify)
         self.assertEqual(config.base_url, 'https://test.com')
-    
+
     def test_update_from_dict(self):
         """Test updating configuration from dictionary."""
-        config = SiteConfig()
+        config = SiteConfig(test_mode=True)
         
         # Update with a dictionary
         config.update_from_dict({
