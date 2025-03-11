@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple-SSG Example Site</title>
+    <meta name="description" content="An example site built with Simple-SSG" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Simple-SSG Example Site" />
+    <meta
+      property="og:description"
+      content="An example site built with Simple-SSG"
+    />
+    <meta property="og:url" content="https://example.com" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Simple-SSG Example Site" />
+    <meta
+      name="twitter:description"
+      content="An example site built with Simple-SSG"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://example.com" />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo">Simple-SSG</a>
+          <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div id="content-container">
+          <div class="loading">Loading content...</div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>
+          &copy; 2025 Simple-SSG Example. Built with
+          <a href="https://github.com/bradyclarke/simple-ssg">Simple-SSG</a>.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JavaScript for mobile menu -->
+    <script>
+      document
+        .querySelector(".menu-toggle")
+        .addEventListener("click", function () {
+          document.querySelector(".nav-links").classList.toggle("active");
+        });
+    </script>
+  </body>
+</html>

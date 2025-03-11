@@ -1,0 +1,32 @@
+# Simple-SSG Basic Website Example Configuration
+
+# Basic paths
+content_dir: content
+template_path: template.html
+output_dir: build
+static_dirs:
+  - css
+  - images
+  - js
+index_path: index.html
+
+# Build options
+clean_output: true
+minify: true
+wrap_sections: true
+
+# Section wrapping
+h1_section_class: hero
+h2_section_class: section
+
+# SEO settings
+base_url: https://example.com
+generate_sitemap: true
+generate_robots: true
+generate_htaccess: true
+
+# Markdown extensions
+markdown_extensions:
+  - extra
+  - tables
+  - smarty
