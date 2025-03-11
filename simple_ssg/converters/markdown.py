@@ -17,6 +17,9 @@ def convert_markdown_to_html(md_content, config=None):
     Returns:
     - HTML content
     """
+    if md_content is None:
+        return "<p>Error: Markdown content is None</p>"
+        
     try:
         # Get markdown extensions from config or use defaults
         extensions = config.markdown_extensions if config else ['extra', 'tables', 'smarty']
@@ -31,6 +34,10 @@ def convert_markdown_to_html(md_content, config=None):
         html = process_class_annotations(html)
         
         return html
+    except AttributeError as e:
+        error_msg = f"Error in configuration: {str(e)}"
+        print(error_msg)
+        return f"<p>{error_msg}</p>"
     except Exception as e:
         error_msg = f"Error converting markdown to HTML: {str(e)}"
         print(error_msg)
@@ -57,6 +64,10 @@ def process_class_annotations(html):
         # <\/\2>           # Closing tag that matches the opening tag
         # )\{\.([^}]+)\}   # Group 4: Captures the class name(s) without the {. and }
         
+        # Pattern for matching tags with class annotations
+        # This isn't a proper HTML parser, so it doesn't handle nested tags correctly
+        # and can be confused by more complex HTML structures. Consider replacing
+        # with a proper HTML parser like BeautifulSoup in a future version.
         pattern = r'(<(\w+)[^>]*>(.*?)<\/\2>)\{\.([^}]+)\}'
         
         # Process the replacement
@@ -70,8 +81,21 @@ def process_class_annotations(html):
             class_list = classes.split('.')
             class_attr = f'class="{" ".join(class_list)}"'
             
-            # Insert class attribute into the opening tag
-            modified_tag = re.sub(r'<' + tag_name + '([^>]*)>', 
+            # Check if the tag already has a class attribute
+            opening_tag_match = re.search(r'<' + tag_name + r'([^>]*?)(class=["\']([^"\']*)["\'](.*?))?>', full_tag)
+            
+            if opening_tag_match and opening_tag_match.group(2):
+                # Tag has existing class attribute, need to merge
+                existing_classes = opening_tag_match.group(3)
+                prefix = opening_tag_match.group(1) or ''
+                suffix = opening_tag_match.group(4) or ''
+                
+                # Create a new opening tag with merged classes
+                new_opening = f'<{tag_name}{prefix}class="{existing_classes} {".join(class_list)}"{suffix}>'
+                modified_tag = full_tag.replace(opening_tag_match.group(0), new_opening)
+            else:
+                # Tag doesn't have a class attribute, just add it
+                modified_tag = re.sub(r'<' + tag_name + '([^>]*)>', 
                                  lambda m: f'<{tag_name}{m.group(1)} {class_attr}>', 
                                  full_tag)
             
@@ -86,26 +110,4 @@ def process_class_annotations(html):
         return html
 
 
-def process_multiple_classes(tag, classes_str):
-    """
-    Process multiple classes separated by dots in a class annotation.
-    
-    Parameters:
-    - tag: The HTML tag
-    - classes_str: String of classes separated by dots (e.g., 'class1.class2')
-    
-    Returns:
-    - HTML tag with class attribute
-    """
-    classes = classes_str.split('.')
-    class_attr = ' class="' + ' '.join(classes) + '"'
-    
-    # Add class attribute to tag
-    if ' class="' in tag:
-        # Append to existing class attribute
-        tag = re.sub(r' class="([^"]*)"', lambda m: f' class="{m.group(1)} {" ".join(classes)}"', tag)
-    else:
-        # Add new class attribute
-        tag = tag[:-1] + class_attr + tag[-1:]
-    
-    return tag
+

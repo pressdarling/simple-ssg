@@ -34,6 +34,23 @@ class TestMarkdownConverter(unittest.TestCase):
         # This should not raise an exception
         html = convert_markdown_to_html(None)
         self.assertIn('<p>Error', html)
+        
+    def test_existing_class_attribute(self):
+        """Test processing class annotations when a class attribute already exists."""
+        html = '<h1 class="existing">Test Heading</h1>{.new-class}'
+        processed = process_class_annotations(html)
+        
+        # Check that both classes are preserved
+        self.assertIn('class="existing new-class"', processed)
+        
+    def test_config_attribute_error(self):
+        """Test handling of AttributeError in configuration."""
+        # Create an object with no markdown_extensions attribute
+        class BadConfig:
+            pass
+            
+        html = convert_markdown_to_html("# Test", BadConfig())
+        self.assertIn('<p>Error in configuration:', html)
 
 class TestHtmlConverter(unittest.TestCase):
     def test_html_passthrough(self):

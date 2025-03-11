@@ -1,33 +1,51 @@
-name: Release
+name: Publish Python Package
 
 on:
   release:
     types: [created]
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
-    
+        python-version: ${{ matrix.python-version }}
     - name: Install uv
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
     - name: Install dependencies
       run: |
-        uv pip install build twine
-    
-    - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        uv pip install -e .
+        uv pip install pytest pytest-cov
+    - name: Run tests
       run: |
-        python -m build
-        twine upload dist/*
+        uv run pytest -xvs --cov=simple_ssg --cov-report=xml
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test]
+    environment: release
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    - name: Build
+      run: |
+        uv build
+    - name: Publish
+      uses: pypa/gh-action-pypi-publish@release/v1
