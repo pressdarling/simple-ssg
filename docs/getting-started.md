@@ -4,7 +4,17 @@ This guide will help you get started with Simple-SSG, a minimalist static site g
 
 ## Installation
 
-Install Simple-SSG using pip:
+### With uv (Recommended)
+
+Install Simple-SSG using uv (the ultra-fast Python package installer):
+
+```bash
+uv pip install simple-ssg
+```
+
+### With pip
+
+Or install with pip if you don't have uv installed:
 
 ```bash
 pip install simple-ssg

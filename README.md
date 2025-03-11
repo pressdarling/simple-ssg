@@ -86,16 +86,16 @@ uv pip install simple-ssg
 ```bash
 git clone https://github.com/bradyclarke/simple-ssg.git
 cd simple-ssg
-pip install -e .
+uv pip install -e .
 ```
 
 ### Dev Environment
 
 ```bash
 # Install development dependencies
-pip install -e ".[dev]"
-# or with uv
 uv pip install -e ".[dev]"
+# or with pip
+pip install -e ".[dev]"
 ```
 
 ## Quick Start
@@ -369,8 +369,6 @@ cd simple-ssg
 
 # Install development dependencies
 uv pip install -e ".[dev]"
-# or with pip
-pip install -e ".[dev]"
 ```
 
 ### Code Quality Tools

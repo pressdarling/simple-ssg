@@ -9,6 +9,10 @@ Simple-SSG can be used as a library in your Python projects, allowing you to cus
 ### Installation
 
 ```bash
+# Recommended: install with uv for faster, more reliable dependency management
+uv pip install simple-ssg
+
+# Or use pip if you don't have uv
 pip install simple-ssg
 ```
 
