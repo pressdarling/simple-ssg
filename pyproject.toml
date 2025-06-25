@@ -11,7 +11,7 @@ authors = [
 description = "A minimalist static site generator"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 keywords = ["static-site-generator", "markdown", "html", "website", "blog", "ssg"]
 classifiers = [
     "Development Status :: 4 - Beta",
