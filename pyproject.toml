@@ -11,19 +11,22 @@ authors = [
 description = "A minimalist static site generator"
 readme = "README.md"
 requires-python = ">=3.8"
+license = {text = "MIT"}
+keywords = ["static-site-generator", "markdown", "html", "website", "blog", "ssg"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Internet :: WWW/HTTP :: Site Management",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Text Processing :: Markup :: HTML",
+    "Operating System :: OS Independent",
 ]
 dependencies = [
     "markdown>=3.3.0",
@@ -32,7 +35,24 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/bradyclarke/simple-ssg"
+"Documentation" = "https://github.com/bradyclarke/simple-ssg/blob/main/README.md"
+"Repository" = "https://github.com/bradyclarke/simple-ssg.git"
 "Bug Tracker" = "https://github.com/bradyclarke/simple-ssg/issues"
+"Changelog" = "https://github.com/bradyclarke/simple-ssg/releases"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "twine>=4.0",
+    "build>=0.10",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
 
 [project.scripts]
 simple-ssg = "simple_ssg.cli:main"
