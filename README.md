@@ -89,14 +89,26 @@ cd simple-ssg
 uv pip install -e .
 ```
 
-### Dev Environment
+### Development Environment
 
 ```bash
-# Install development dependencies
+# Install with all development dependencies
 uv pip install -e ".[dev]"
 # or with pip
 pip install -e ".[dev]"
+
+# Install with only test dependencies
+uv pip install -e ".[test]"
 ```
+
+The `[dev]` option includes all development tools:
+- **pytest** and **pytest-cov** for testing
+- **ruff** for linting and formatting
+- **mypy** for type checking
+- **twine** for PyPI publishing
+- **build** for package building
+
+The `[test]` option includes only testing dependencies for CI environments.
 
 ## Quick Start
 
@@ -376,14 +388,39 @@ uv pip install -e ".[dev]"
 Simple-SSG uses modern Python tools for code quality:
 
 ```bash
-# Run linter
-ruff check simple_ssg
+# Run all quality checks (recommended)
+python run_code_quality.py
 
-# Run type checking
-mypy simple_ssg
+# Or run individual tools:
+ruff check simple_ssg        # Linting
+mypy simple_ssg              # Type checking  
+pytest                       # Run tests
+pytest --cov=simple_ssg      # Tests with coverage
 
-# Run tests
-pytest
+# Package building and validation
+python -m build              # Build package
+twine check dist/*           # Validate for PyPI
+```
+
+### PyPI Publication
+
+To publish to PyPI:
+
+```bash
+# 1. Ensure all tests pass
+python run_code_quality.py
+
+# 2. Build the package
+python -m build
+
+# 3. Validate the build
+twine check dist/*
+
+# 4. Upload to PyPI (requires API token)
+twine upload dist/*
+
+# Or test with TestPyPI first
+twine upload --repository testpypi dist/*
 ```
 
 ### GitHub Actions
