@@ -184,3 +184,8 @@ cython_debug/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Claude session logs
+logs/
+.claude-trace/
+.claude/

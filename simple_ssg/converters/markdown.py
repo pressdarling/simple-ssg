@@ -91,7 +91,8 @@ def process_class_annotations(html):
                 suffix = opening_tag_match.group(4) or ''
                 
                 # Create a new opening tag with merged classes
-                new_opening = f'<{tag_name}{prefix}class="{existing_classes} {".join(class_list)}"{suffix}>'
+                class_string = " ".join(class_list)
+                new_opening = f'<{tag_name}{prefix}class="{existing_classes} {class_string}"{suffix}>'
                 modified_tag = full_tag.replace(opening_tag_match.group(0), new_opening)
             else:
                 # Tag doesn't have a class attribute, just add it
