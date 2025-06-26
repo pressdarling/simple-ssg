@@ -204,11 +204,21 @@ class TestPackageBuildProcess(unittest.TestCase):
             
             # Check for warnings in output
             stderr_lower = result.stderr.lower()
-            warning_keywords = ['deprecation', 'warning', 'error']
+            
+            # Check for unexpected errors (should cause test failure)
+            if 'error' in stderr_lower and 'deprecated' not in stderr_lower:
+                self.fail(f"Unexpected error in build output: {result.stderr}")
+            
+            # Check for unexpected warnings (should cause test failure)
+            warning_keywords = ['warning']
             for keyword in warning_keywords:
-                if keyword in stderr_lower and 'deprecated' in stderr_lower:
-                    # Allow this specific case as we've addressed the main deprecation warnings
-                    continue
+                if keyword in stderr_lower and 'deprecated' not in stderr_lower:
+                    self.fail(f"Unexpected {keyword} in build output: {result.stderr}")
+            
+            # Allow known deprecation warnings as they're being addressed
+            if 'deprecation' in stderr_lower or 'deprecated' in stderr_lower:
+                import warnings
+                warnings.warn(f"Build contains deprecation warnings: {result.stderr}")
                 
         finally:
             os.chdir(original_cwd)
