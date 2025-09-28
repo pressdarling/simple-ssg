@@ -88,7 +88,7 @@ def inject_content(content: str, content_path: str, config: SiteConfig) -> str:
     except Exception as e:
         print(f"Error injecting content into template: {str(e)}")
         return (
-            "<html><body><h1>Error</h1><p>{str(e)}</p>"
+            f"<html><body><h1>Error</h1><p>{str(e)}</p>"
             f"<div>{content}</div></body></html>"
         )
 

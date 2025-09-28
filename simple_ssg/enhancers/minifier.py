@@ -40,8 +40,8 @@ def minify_html(html: str) -> str:
         )
 
         # Remove unnecessary whitespace
-        html = re.sub(r"\\s+", " ", html)
-        html = re.sub(r">\\s+<", "><", html)
+        html = re.sub(r"\s+", " ", html)
+        html = re.sub(r">\s+<", "><", html)
 
         # Trim whitespace around specific tags
         for tag in [
@@ -67,8 +67,8 @@ def minify_html(html: str) -> str:
             "ol",
             "li",
         ]:
-            html = re.sub(f"<{tag}>\\s+", f"<{tag}>", html)
-            html = re.sub(f"\\s+</{tag}>", f"</{tag}>", html)
+            html = re.sub(f"<{tag}>" + r"\s+", f"<{tag}>", html)
+            html = re.sub(r"\s+" + f"</{tag}>", f"</{tag}>", html)
 
         return html.strip()
     except Exception as e:
