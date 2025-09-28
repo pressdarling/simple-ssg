@@ -160,40 +160,53 @@ my-website/
 
 ## Configuration
 
-Simple-SSG can be configured through a YAML file (default: `config.yaml`):
+Simple-SSG is configured using a `config.yaml` or `config.json` file. The following options are available:
 
 ```yaml
-# Basic paths
+# Paths
+# Directory containing your Markdown content files.
 content_dir: content
+# Path to your main HTML template file.
 template_path: template.html
+# Directory where the final static site will be generated.
 output_dir: build
+# List of directories containing static assets (CSS, images, etc.) to be copied.
 static_dirs:
   - css
   - images
   - js
+# Path to a root-level index.html file, if you have one.
 index_path: index.html
 
-# Build options
+# Build Options
+# If true, the output directory will be deleted before each build.
 clean_output: true
+# If true, the generated HTML will be minified to reduce file size.
 minify: true
+# If true, content will be automatically wrapped in <section> tags based on headings.
 wrap_sections: true
 
-# Section wrapping
+# Section Wrapping
+# The CSS class to apply to <section> tags generated from <h1> headings.
 h1_section_class: hero
+# The CSS class to apply to <section> tags generated from <h2> headings.
 h2_section_class: section
 
-# SEO settings
-site_name: "My Website"
-site_description: "A website built with Simple-SSG"
+# SEO Settings
+# The base URL of your final website (e.g., "https://example.com").
 base_url: https://example.com
+# If true, a sitemap.xml will be generated.
 generate_sitemap: true
+# If true, a robots.txt will be generated.
 generate_robots: true
+# If true, a .htaccess file with common web server settings will be generated.
+generate_htaccess: true
 
-# Image paths
+# Content Handling
+# A dictionary of path replacements to fix image links in your content.
 image_path_replacements:
   ../images/: images/
-
-# Markdown extensions
+# A list of extensions to use for the Python-Markdown library.
 markdown_extensions:
   - extra
   - tables
@@ -202,76 +215,57 @@ markdown_extensions:
 
 ## Template System
 
-Simple-SSG uses a simple template system with placeholders:
+Simple-SSG uses a straightforward template system. Your `template.html` file serves as the master layout for all pages.
 
+### Content Injection
+
+The generator injects your converted Markdown content into the template by replacing the contents of a specific `div`. Your template should contain a `div` element with `id="content-container"`.
+
+Example `div` in `template.html`:
 ```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{title}} - {{site_name}}</title>
-    <meta name="description" content="{{description}}" />
-    <link rel="stylesheet" href="/css/styles.css" />
-  </head>
-  <body>
-    <header>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/about.html">About</a>
-        <a href="/contact.html">Contact</a>
-      </nav>
-    </header>
-
-    <main>{{content}}</main>
-
-    <footer>
-      <p>&copy; 2025 - {{site_name}}</p>
-    </footer>
-  </body>
-</html>
+<main>
+    <div class="container">
+        <div id="content-container">
+            <!-- Your Markdown content will be injected here -->
+            <div class="loading">Loading content...</div>
+        </div>
+    </div>
+</main>
 ```
 
-### Available Placeholders
+### Automatic Metadata
 
-- `{{content}}` - The converted content from Markdown
-- `{{title}}` - The page title (from first h1 heading or front matter)
-- `{{description}}` - The page description (from front matter)
-- `{{site_name}}` - The site name from config
-- `{{site_description}}` - The site description from config
-- `{{base_url}}` - The base URL from config
-- Any custom variable defined in front matter
+Simple-SSG automatically extracts metadata from your content to populate tags in the `<head>` of your template:
+
+-   **`<title>`**: The content of the first `<h1>` tag in your Markdown file is used as the page title.
+-   **`<meta name="description">`**: The content of the first `<p>` tag that follows the `<h1>` is used as the meta description.
+
+These values are also used to populate other SEO-related tags, such as Open Graph and Twitter Cards, if they exist in your template.
 
 ## Writing Content
 
-### Front Matter
-
-You can add YAML front matter to the beginning of your Markdown files:
-
-```markdown
----
-title: My Custom Title
-description: This is a custom page description for SEO
-custom_variable: This can be used in the template
----
-
-# Page Content
-
-Regular markdown content goes here.
-```
-
 ### Class Annotations
 
-Add CSS classes to elements using the `{.classname}` syntax:
+You can add CSS classes to HTML elements directly from your Markdown files using the `{.classname}` syntax immediately after a block-level element.
 
 ```markdown
 # Page Title {.custom-title}
 
-This is a paragraph with a [special link](page.html){.special-link}.
+This is the first paragraph.
 
 ## Section Title {.important}
 
-> A blockquote with a class {.note}
+> A blockquote with a class. {.note}
+```
+
+This will produce:
+```html
+<h1 class="custom-title">Page Title</h1>
+<p>This is the first paragraph.</p>
+<h2 class="important">Section Title</h2>
+<blockquote class="note">
+<p>A blockquote with a class.</p>
+</blockquote>
 ```
 
 ### Basic Markdown
@@ -296,7 +290,13 @@ This is a **bold** and *italic* text.
 
 ![Image alt text](image.jpg)
 
-```code block```
+`inline code`
+
+```python
+# A code block
+def hello():
+    print("Hello, World!")
+```
 
 | Table | Header |
 |-------|--------|
@@ -349,13 +349,6 @@ config = {
     "minify": True
 }
 build_site(config_dict=config)
-
-# With custom enhancers
-from simple_ssg.enhancers import Minifier, SeoEnhancer
-build_site(
-    config_file="config.yaml",
-    enhancers=[Minifier(), SeoEnhancer()]
-)
 ```
 
 ## Development
@@ -393,45 +386,6 @@ The repository includes GitHub Actions workflows for:
 - Running tests on every push
 - Code quality checks
 - Automated publishing to PyPI on new releases
-
-## Extending Simple-SSG
-
-### Custom Converters
-
-You can create custom content converters by extending the base Converter class:
-
-```python
-from simple_ssg.converters import Converter
-
-class MyCustomConverter(Converter):
-    def convert(self, content, **kwargs):
-        # Process content
-        return processed_content
-```
-
-### Custom Enhancers
-
-Create custom enhancers to add functionality to the build process:
-
-```python
-from simple_ssg.enhancers import Enhancer
-
-class MyCustomEnhancer(Enhancer):
-    def enhance(self, site, **kwargs):
-        # Enhance the site object
-        return enhanced_site
-```
-
-## Integration with Other Projects
-
-Simple-SSG can be used as a component in larger projects:
-
-- As a dependency in a web application
-- Integrated into a content management system
-- Part of a continuous integration pipeline
-- Embedded in a developer tool
-
-See the [Integration Guide](https://github.com/bradyclarke/simple-ssg/blob/main/docs/integration-guide.md) for more details.
 
 ## License
 
